@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Feed</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <div class="nav">
+        <a href="/feed">Feed</a>
+        <a href="/create">Create Event</a>
+    </div>
+
+    <div class="container">
+        <h1>Event Feed</h1>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search in descriptions..." style="margin-right: 10px;">
+            <input type="text" id="tagFilter" placeholder="Filter by tag..." style="margin-right: 10px;">
+            <button onclick="applyFilters()">Apply Filters</button>
+            <button onclick="clearFilters()">Clear</button>
+        </div>
+
+        <!-- Events List -->
+        <div id="eventsList" class="events-list"></div>
+    </div>
+
+    <script src="/static/js/feed.js"></script>
+</body>
+
+</html>

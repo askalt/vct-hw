@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"event-server/db"
 	"event-server/models"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 
+	"github.com/apex/log"
 	"github.com/gorilla/mux"
+	"github.com/lib/pq"
 )
 
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -24,14 +27,15 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if event.Title == "" {
-		http.Error(w, "Title is required", http.StatusBadRequest)
+	if event.Name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
 		return
 	}
 
-	query := `INSERT INTO events (title, description, image) VALUES ($1, $2, $3) RETURNING id`
-	err = db.DB.QueryRow(query, event.Title, event.Description, event.Image).Scan(&event.ID)
+	query := `INSERT INTO events (name, description, tags, date) VALUES ($1, $2, $3, $4) RETURNING id`
+	err = db.DB.QueryRow(query, event.Name, event.Description, pq.Array(event.Tags), event.Date).Scan(&event.ID)
 	if err != nil {
+		log.Error(fmt.Sprintf("Error creating event: %v", err))
 		http.Error(w, "Error creating event", http.StatusInternalServerError)
 		return
 	}
@@ -42,17 +46,17 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetEvents(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.DB.Query("SELECT id, title, description, image, created_at FROM events ORDER BY created_at DESC")
+	rows, err := db.DB.Query("SELECT id, name, description, tags, date FROM events ORDER BY date DESC")
 	if err != nil {
 		http.Error(w, "Error fetching events", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	var events []models.Event
+	events := []models.Event{}
 	for rows.Next() {
 		var event models.Event
-		err := rows.Scan(&event.ID, &event.Title, &event.Description, &event.Image, &event.CreatedAt)
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, pq.Array(&event.Tags), &event.Date)
 		if err != nil {
 			http.Error(w, "Error scanning events", http.StatusInternalServerError)
 			return
@@ -84,8 +88,8 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `UPDATE events SET title=$1, description=$2, image=$3 WHERE id=$4`
-	result, err := db.DB.Exec(query, event.Title, event.Description, event.Image, eventID)
+	query := `UPDATE events SET name=$1, description=$2, tags=$3 WHERE id=$4`
+	result, err := db.DB.Exec(query, event.Name, event.Description, event.Tags, eventID)
 	if err != nil {
 		http.Error(w, "Error updating event", http.StatusInternalServerError)
 		return

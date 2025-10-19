@@ -6,11 +6,11 @@ import (
 
 // Event describes a posted event.
 type Event struct {
-	ID          int       `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Image       string    `json:"image"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Tags        []string `json:"tags"`
+	Date        string   `json:"date"`
 }
 
 // Registration associates an user with an event.

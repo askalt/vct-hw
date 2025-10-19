@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -21,20 +21,31 @@ services:
       retries: 10
       start_period: 10s
 
-  app:
-    image: event-server:latest
-    container_name: event-server
+  events-backend:
+    image: events-backend
+    container_name: events-backend
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: password
-      DB_NAME: events_db
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: events_db
     ports:
       - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - event-network
+
+  events-frontend:
+    image: events-frontend
+    container_name: events-frontend
+    environment:
+      BACKEND_HOST: events-backend
+      BACKEND_PORT: 8080
+    ports:
+      - "8081:8081"
     networks:
       - event-network
 

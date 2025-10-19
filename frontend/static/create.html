@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <div class="nav">
+        <a href="/feed">Feed</a>
+        <a href="/create">Create Event</a>
+    </div>
+
+    <div class="container">
+        <h1>Create New Event</h1>
+
+        <form id="eventForm" class="event-form">
+            <div class="form-group">
+                <label for="name">Event Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags (comma-separated):</label>
+                <input type="text" id="tags" name="tags" placeholder="music, conference, workshop">
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="datetime-local" id="date" name="date" required>
+            </div>
+
+            <button type="submit">Create Event</button>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script src="/static/js/create.js"></script>
+</body>
+
+</html>
