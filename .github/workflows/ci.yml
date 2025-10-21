@@ -7,8 +7,8 @@ on:
     branches: [master]
 
 jobs:
-  test:
-    name: Build and Test
+  test-backend:
+    name: Test backend
     runs-on: ubuntu-22.04
 
     steps:
@@ -22,12 +22,37 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: go mod download
+        run: cd backend && go mod download
 
       - name: Verify dependencies
-        run: go mod verify
+        run: cd backend && go mod verify
 
       - name: Run unit tests
         run: |
-          go test -C backend -v -race
-          go test -C frontend -v -race
+          cd backend
+          go test . -v -race
+
+  test-frontend:
+    name: Test frontend
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+          cache: true
+
+      - name: Install dependencies
+        run: cd frontend && go mod download
+
+      - name: Verify dependencies
+        run: cd frontend && go mod verify
+
+      - name: Run unit tests
+        run: |
+          cd frontend
+          go test . -v -race
